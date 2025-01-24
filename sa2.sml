@@ -22,27 +22,46 @@ val () =
 
 
 (**** Problem B ****)
-(*
-fun firstVowel _ = false
+fun firstVowel [] = false
+  | firstVowel (#"a"::_) = true
+  | firstVowel (#"e"::_) = true
+  | firstVowel (#"i"::_) = true
+  | firstVowel (#"o"::_) = true
+  | firstVowel (#"u"::_) = true
+  | firstVowel _ = false;
 
 val () =
     Unit.checkExpectWith Bool.toString "firstVowel 'ack' should be true"
     (fn () => firstVowel [#"a",#"c",#"k"])
     true
-*)
+
 (**** Problem C ****)
-(*
-fun reverse xs = xs
+
+(* reverse : 'a list -> 'a list *)
+
+fun reverse xs = foldl (fn (x, acc) => x :: acc) [] xs;
+
+(* Here [] is the accumulator, 
+* and xs is a pointer to the tail of the list to reverse that is passed
+*   to foldl as its last argument
+*
+* foldl is appending the accumulator to the last element of the list,
+*   until the head of the list is found
+* *)
 
 val () =
   Unit.checkExpectWith (Unit.listString Int.toString) 
   "reverse [1,2] should be [2,1]"
   (fn () => reverse [1,2])
   [2,1]
-*)
+
 (**** Problem D ****)
-(*
-fun minlist _ = 0
+exception EmptyListException
+
+fun minlist xs =
+    case xs of
+        [] => raise EmptyListException
+      | x::xs' => foldl Int.min x xs'
 
 val () =
   Unit.checkExnWith Int.toString
@@ -54,17 +73,18 @@ val () =
   "minlist [1,2,3,4,0] should be 0"
   (fn () => minlist [1,2,3,4,0])
   0
-*)
-(**** Problem E ****)
-(*
+
+(**** Problem E ****) 
 exception Mismatch
 
-fun zip _ = []
-*)
+fun zip ([], []) = []
+  | zip (x::xs, y::ys) = (x, y) :: zip(xs, ys)
+  | zip (_, _) = raise Mismatch
+
 (**** Problem F ****)
-(*
-fun concat xs = xs
-*)
+fun concat [] = []
+  | concat (xs::xss) = xs @ concat xss
+
 (**** Problem G ****)
 (*
 fun isDigit _    = false;
